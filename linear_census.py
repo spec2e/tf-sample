@@ -99,9 +99,18 @@ age_buckets_x_education_x_occupation = tf.contrib.layers.crossed_column(
 
 model_dir = tempfile.mkdtemp()
 
+# m = tf.contrib.learn.LinearClassifier(feature_columns=[
+#   gender, native_country, education, occupation, workclass, marital_status, race,
+#   age_buckets, education_x_occupation, age_buckets_x_education_x_occupation],
+#   model_dir=model_dir)
+
 m = tf.contrib.learn.LinearClassifier(feature_columns=[
   gender, native_country, education, occupation, workclass, marital_status, race,
   age_buckets, education_x_occupation, age_buckets_x_education_x_occupation],
+  optimizer=tf.train.FtrlOptimizer(
+    learning_rate=0.1,
+    l1_regularization_strength=1.0,
+    l2_regularization_strength=1.0),
   model_dir=model_dir)
 
 print("Now training...")
