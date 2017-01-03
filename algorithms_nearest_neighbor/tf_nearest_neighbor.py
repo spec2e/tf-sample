@@ -10,14 +10,14 @@ def load_dataset(filename, split, training_set=[], test_set=[]):
         lines = csv.reader(csvfile)
         dataset = list(lines)
         for x in range(len(dataset) - 1):
-            #print(x)
+            # print(x)
             for y in range(4):
                 dataset[x][y] = float(dataset[x][y])
             if x < split:
-                #print("train")
+                # print("train")
                 training_set.append(dataset[x][0:4])
             else:
-                #print("test")
+                # print("test")
                 test_set.append(dataset[x][0:4])
 
 
@@ -36,14 +36,16 @@ xte = tf.placeholder("float", [4])
 
 # Nearest Neighbor calculation using L1 Distance
 # Calculate L1 Distance
-distance = tf.reduce_sum(tf.abs(tf.add(xtr, tf.neg(xte))), reduction_indices=1)
+#distance = tf.reduce_sum(tf.abs(tf.add(xtr, tf.neg(xte))), reduction_indices=1)
+distance = tf.sqrt(tf.reduce_sum(tf.pow(tf.subtract(xtr, xte), 2), reduction_indices=1))
+
 # Prediction: Get min distance index (Nearest neighbor)
 pred = tf.arg_min(distance, 0)
 
 accuracy = 0.
 
 # Initializing the variables
-init = tf.initialize_all_variables()
+init = tf.global_variables_initializer()
 
 # Launch the graph
 with tf.Session() as sess:
@@ -61,7 +63,7 @@ with tf.Session() as sess:
     print("Test", i, "Prediction:", np.argmax(Xtr[nn_index]), "True Class:", np.argmax(Xte[i]))
     # Calculate accuracy
     if np.argmax(Xtr[nn_index]) == np.argmax(Xte[i]):
-        accuracy += 1./len(Xte)
+        accuracy += 1. / len(Xte)
 
     print("Done!")
     print("Accuracy:", accuracy)
